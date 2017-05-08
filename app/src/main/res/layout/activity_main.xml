@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.giuseppeliguori.joystick.MainActivity">
+
+    <RelativeLayout
+        android:id="@+id/layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.giuseppeliguori.joystick.JoystickView
+            android:id="@+id/joystickRight"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true" />
+
+        <TextView
+            android:id="@+id/valuesJoystickRight"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:padding="8dp"
+            android:textSize="14sp"
+            android:gravity="bottom|right"
+            tools:text="Angle: 90\nPower:100\nPowerX:100\nPowerY:100"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_alignParentTop="true"
+            android:layout_alignLeft="@+id/joystickRight"
+            android:layout_alignStart="@+id/joystickRight"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_above="@+id/joystickRight" />
+
+        <com.giuseppeliguori.joystick.JoystickView
+            android:id="@+id/joystickLeft"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_alignParentBottom="true"/>
+
+
+        <TextView
+            android:id="@+id/valuesJoystickLeft"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:padding="8dp"
+            android:textSize="14sp"
+            android:gravity="bottom|left"
+            tools:text="Angle: 90\nPower:100\nPowerX:100\nPowerY:100"
+            android:textColor="@color/colorPrimaryDark"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignRight="@+id/joystickLeft"
+            android:layout_alignEnd="@+id/joystickLeft"
+            android:layout_above="@+id/joystickLeft" />
+
+        <RelativeLayout
+            android:id="@+id/view"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@color/colorPrimaryDark"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:background="@color/colorPrimary">
+
+            </View>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</RelativeLayout>
