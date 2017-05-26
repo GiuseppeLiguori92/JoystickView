@@ -8,7 +8,6 @@ import android.graphics.Paint;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -20,7 +19,6 @@ public class JoystickView extends View implements View.OnTouchListener{
 
     private static final String TAG = "JoystickView";
 
-    public static final int ANIMATION_TO_CENTER_DURATION = 100;
     // Width & Height definition
     private float mHeight = 0;
     private float mWidth  = 0;
@@ -41,15 +39,18 @@ public class JoystickView extends View implements View.OnTouchListener{
     private float mPositionInternalCircle[] = new float[2];
 
     // Values
-    private float mAngle        = 0;
-    private float mPower        = 0;
-    private float mPowerX       = 0;
-    private float mPowerY       = 0;
+    private float mAngle                = 0;
+    private float mStrength             = 0;
+    private float mStrengthX            = 0;
+    private float mStrengthY            = 0;
     private long mStartPressedTime      = 0;
     private long mPressedTime           = 0;
 
     // Listener
     private OnJoystickMoveListener onJoystickMoveListener = null;
+
+    // Animation
+    public static final int ANIMATION_TO_CENTER_DURATION = 100;
 
     // Updater
     private Handler mHandler = new Handler();
@@ -121,7 +122,7 @@ public class JoystickView extends View implements View.OnTouchListener{
     public boolean onTouch(View v, MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                resetVariables();
+                resetValues();
                 mStartPressedTime = System.currentTimeMillis();
                 mStartX = event.getRawX();
                 mStartY = event.getRawY();
@@ -130,7 +131,8 @@ public class JoystickView extends View implements View.OnTouchListener{
                 invalidate();
                 break;
             case MotionEvent.ACTION_UP:
-                resetVariables();
+                resetValues();
+
                 ValueAnimator xValueAnimator = ValueAnimator.ofFloat(mPositionInternalCircle[0], mWidth/2.0f);
                 xValueAnimator.setDuration(ANIMATION_TO_CENTER_DURATION);
                 xValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -140,6 +142,7 @@ public class JoystickView extends View implements View.OnTouchListener{
                     }
                 });
                 xValueAnimator.start();
+
                 ValueAnimator yValueAnimator = ValueAnimator.ofFloat(mPositionInternalCircle[1], mHeight/2.0f);
                 yValueAnimator.setDuration(ANIMATION_TO_CENTER_DURATION);
                 yValueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -149,79 +152,72 @@ public class JoystickView extends View implements View.OnTouchListener{
                     }
                 });
                 yValueAnimator.start();
+
                 invalidate();
                 break;
             case MotionEvent.ACTION_MOVE:
                 mCurrentX = event.getRawX();
                 mCurrentY = event.getRawY();
-                mPositionInternalCircle = move(mStartX, mStartY, mCurrentX, mCurrentY, mExternalRadius, mInternalRadius);
-                invalidate();
+
+                calculateValues(mStartX, mStartY, mCurrentX, mCurrentY, mExternalRadius);
+                moveJoystick(mStartX, mStartY, mCurrentX, mCurrentY, mExternalRadius);
                 break;
         }
         return true;
     }
 
-    private void resetVariables() {
+    private void calculateValues(float startX, float startY, float currentX, float currentY, float radius) {
+        calculateStrengths(startX, startY, currentX, currentY, radius);
+        calculateAngle(startX, startY, currentX, currentY);
+    }
+
+    private void resetValues() {
         mStartX = 0;
         mStartY = 0;
         mCurrentX = 0;
         mCurrentY = 0;
-        mPower = 0;
-        mPowerX = 0;
-        mPowerY = 0;
+        mStrength = 0;
+        mStrengthX = 0;
+        mStrengthY = 0;
         mPressedTime = 0;
         mStartPressedTime = 0;
     }
 
     private void updateListener() {
         if (onJoystickMoveListener != null) {
-            onJoystickMoveListener.onJoystickMoveListener(mPowerX,
-                    mPowerY,
-                    mPower,
+            onJoystickMoveListener.onJoystickMoveListener(mStrengthX,
+                    mStrengthY,
+                    mStrength,
                     (float) Math.toDegrees(mAngle),
                     mPressedTime);
         }
     }
 
-    public float[] move(float startX, float startY, float currentX, float currentY, float externalRadius, float internalRadius) {
-        int position[] = new int[2];
-        getLocationOnScreen(position);
+    private void calculateStrengths(float startX, float startY, float currentX, float currentY, float radius) {
+        float deltaX = currentX - startX;
+        float deltaY = currentY - startY;
 
-        float xDiff = currentX - startX;
-        float yDiff = currentY - startY;
-        double hypotenuse = Math.sqrt(xDiff*xDiff + yDiff*yDiff);
-
-        mPower = (float) (hypotenuse / externalRadius * 100.0f);
-        if (mPower >= 100.0f) { mPower = 100.0f; }
-
-        mPowerX = xDiff / mExternalRadius * 100;
-        if (mPowerX >= 100.0f) { mPowerX = 100.0f; }
-        if (mPowerX <= -100.0f) { mPowerX = -100.0f; }
-        mPowerY =  yDiff / mExternalRadius * 100;
-        if ( mPowerY >= 100.0f) { mPowerY = 100.0f; }
-        if ( mPowerY <= -100.0f) { mPowerY = -100.0f; }
-
-        mAngle = (float) calculateAngle(xDiff, yDiff);
-
-        if (hypotenuse > externalRadius) {
-            float calculatedX = (float) (mWidth/2.0f + (externalRadius) * Math.cos(mAngle));
-            float calculatedY = (float) (mHeight/2.0f + (externalRadius) * Math.sin(mAngle));
-            return new float[]{calculatedX, calculatedY};
-        } else {
-            return new float[]{currentX-startX+mWidth/2.0f, currentY-startY+mHeight/2.0f};
-        }
+        float strengths[] = JoystickCore.getInstance().calculateStrengthsPercentage(deltaX, deltaY, radius);
+        mStrength = strengths[0];
+        mStrengthX = strengths[1];
+        mStrengthY = strengths[2];
     }
 
-    private double calculateAngle(float deltaX, float deltaY) {
-        if (deltaX >= 0 && deltaY >= 0)
-            return Math.atan(deltaY / deltaX);
-        else if (deltaX >= 0 && deltaY < 0)
-            return Math.atan(deltaY / deltaX) + Math.PI*2.0f;
-        else if (deltaX < 0 && deltaY >= 0)
-            return Math.atan(deltaY / deltaX) + Math.PI;
-        else if (deltaX < 0 && deltaY < 0)
-            return Math.atan(deltaY / deltaX) + Math.PI;
-        return 0;
+    public void calculateAngle(float startX, float startY, float currentX, float currentY) {
+        float deltaX = currentX - startX;
+        float deltaY = currentY - startY;
+
+        mAngle = (float) JoystickCore.getInstance().calculateAngle(deltaX, deltaY);
+    }
+
+    public void moveJoystick(float startX, float startY, float currentX, float currentY, float radius) {
+        float deltaX = currentX - startX;
+        float deltaY = currentY - startY;
+
+        float centerX = mWidth/2.0f;
+        float centerY = mHeight/2.0f;
+        mPositionInternalCircle = JoystickCore.getInstance().getAdjustedPositions(deltaX, deltaY, radius, centerX, centerY, mAngle);
+        invalidate();
     }
 
     @Override
@@ -242,20 +238,18 @@ public class JoystickView extends View implements View.OnTouchListener{
         this.onJoystickMoveListener = onJoystickMoveListener;
     }
 
-    public float getAngle() {
-        return mAngle;
-    }
+    public float getAngle() { return mAngle; }
 
     public float getPower() {
-        return mPower;
+        return mStrength;
     }
 
     public float getPowerX() {
-        return mPowerX;
+        return mStrengthX;
     }
 
     public float getPowerY() {
-        return mPowerY;
+        return mStrengthY;
     }
 
     public long getPressedTime() { return mPressedTime; }

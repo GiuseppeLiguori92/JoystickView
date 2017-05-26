@@ -66,12 +66,6 @@ public class MainActivityTest {
     }
 
     @Test
-    public void checkZeroAngle() {
-        assertNotNull(joystickView);
-        assertEquals(joystickView.getAngle(), 0.0f, 0.0f);
-    }
-
-    @Test
     public void checkZeroPower() {
         assertNotNull(joystickView);
         assertEquals(joystickView.getPower(), 0.0f, 0.0f);
