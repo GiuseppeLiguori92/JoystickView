@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
                     mView.setX(mView.getX() + strengthX /10.0f);
                 }
 
-                if (mView.getY() + strengthX /10.0f < mHeightView/4.0f) {
+                if (mView.getY() + strengthY /10.0f < mHeightView/4.0f) {
                     mView.setY(mHeightView/4.0f);
                 } else if (mView.getY() + strengthY /10.0f + mHeightView > mHeightLayout - mHeightView/4.0f) {
                     mView.setY(mHeightLayout - mHeightView - mHeightView/4.0f);
