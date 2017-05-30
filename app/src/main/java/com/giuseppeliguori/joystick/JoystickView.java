@@ -18,6 +18,7 @@ import android.view.View;
 public class JoystickView extends View implements View.OnTouchListener{
 
     private static final String TAG = "JoystickView";
+    public static int UPDATE_FREQUENCY = 10;
 
     // Width & Height definition
     private float mHeight = 0;
@@ -77,7 +78,7 @@ public class JoystickView extends View implements View.OnTouchListener{
                 mPressedTime = System.currentTimeMillis()-mStartPressedTime;
             }
             updateListener();
-            mHandler.postDelayed(this, 10);
+            mHandler.postDelayed(this, UPDATE_FREQUENCY);
         }
     };
 
@@ -159,16 +160,16 @@ public class JoystickView extends View implements View.OnTouchListener{
                 mCurrentX = event.getRawX();
                 mCurrentY = event.getRawY();
 
-                calculateValues(mStartX, mStartY, mCurrentX, mCurrentY, mExternalRadius);
-                moveJoystick(mStartX, mStartY, mCurrentX, mCurrentY, mExternalRadius);
+                processValues(mStartX, mStartY, mCurrentX, mCurrentY, mExternalRadius);
                 break;
         }
         return true;
     }
 
-    private void calculateValues(float startX, float startY, float currentX, float currentY, float radius) {
+    private void processValues(float startX, float startY, float currentX, float currentY, float radius) {
         calculateStrengths(startX, startY, currentX, currentY, radius);
         calculateAngle(startX, startY, currentX, currentY);
+        moveJoystick(startX, startY, currentX, currentY, radius);
     }
 
     private void resetValues() {
@@ -206,7 +207,6 @@ public class JoystickView extends View implements View.OnTouchListener{
     public void calculateAngle(float startX, float startY, float currentX, float currentY) {
         float deltaX = currentX - startX;
         float deltaY = currentY - startY;
-
         mAngle = (float) JoystickCore.getInstance().calculateAngle(deltaX, deltaY);
     }
 
@@ -240,22 +240,22 @@ public class JoystickView extends View implements View.OnTouchListener{
 
     public float getAngle() { return mAngle; }
 
-    public float getPower() {
+    public float getStrength() {
         return mStrength;
     }
 
-    public float getPowerX() {
+    public float getStrengthX() {
         return mStrengthX;
     }
 
-    public float getPowerY() {
+    public float getStrengthY() {
         return mStrengthY;
     }
 
     public long getPressedTime() { return mPressedTime; }
 
     public interface OnJoystickMoveListener {
-        void onJoystickMoveListener(float powerX, float powerY, float power, float angle, long pressedTime);
+        void onJoystickMoveListener(float strengthX, float strengthY, float strength, float angle, long pressedTime);
     }
 }
 

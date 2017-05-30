@@ -58,33 +58,33 @@ public class MainActivity extends AppCompatActivity {
         joystickViewRight = (JoystickView) findViewById(R.id.joystickRight);
         joystickViewRight.setOnJoystickMoveListener(new JoystickView.OnJoystickMoveListener() {
             @Override
-            public void onJoystickMoveListener(final float powerX,final float powerY,final float power,final float angle, final long pressedTime) {
+            public void onJoystickMoveListener(final float strengthX, final float strengthY, final float strength, final float angle, final long pressedTime) {
                 //Log.d(TAG, "onJoystickMoveListener() called with: powerX = [" + powerX + "], powerY = [" + powerY + "], power = [" + power + "], angle = [" + angle + "], pressedTime = [" + pressedTime + "]");
                 //Log.d(TAG, "------------------------------------");
 
                 if (mWidthLayout <= 0 || mHeightLayout <= 0) { return; }
                 textViewJoystickRight.setText(
-                        "PowerX: " + String.format("%.00f",powerX) + "\n" +
-                                "PowerY: " + String.format("%.00f",powerY) + "\n" +
-                                "Power: " + String.format("%.00f",power) + "\n" +
+                        "PowerX: " + String.format("%.00f", strengthX) + "\n" +
+                                "PowerY: " + String.format("%.00f", strengthY) + "\n" +
+                                "Power: " + String.format("%.00f", strength) + "\n" +
                                 "Angle: " + String.format("%.00f",angle) + "\n" +
                                 "Time: " + pressedTime + "\n"
                 );
 
-                if (mView.getX() + powerX/10.0f < mWidthView/4.0f) {
+                if (mView.getX() + strengthX /10.0f < mWidthView/4.0f) {
                     mView.setX(mWidthView/4.0f);
-                } else if (mView.getX() + powerX/10.0f + mWidthView > mWidthLayout - mWidthView/4.0f) {
+                } else if (mView.getX() + strengthX /10.0f + mWidthView > mWidthLayout - mWidthView/4.0f) {
                     mView.setX(mWidthLayout - mWidthView - mWidthView/4.0f);
                 } else {
-                    mView.setX(mView.getX() + powerX/10.0f);
+                    mView.setX(mView.getX() + strengthX /10.0f);
                 }
 
-                if (mView.getY() + powerX/10.0f < mHeightView/4.0f) {
+                if (mView.getY() + strengthX /10.0f < mHeightView/4.0f) {
                     mView.setY(mHeightView/4.0f);
-                } else if (mView.getY() + powerY/10.0f + mHeightView > mHeightLayout - mHeightView/4.0f) {
+                } else if (mView.getY() + strengthY /10.0f + mHeightView > mHeightLayout - mHeightView/4.0f) {
                     mView.setY(mHeightLayout - mHeightView - mHeightView/4.0f);
                 } else {
-                    mView.setY(mView.getY() + powerY/10.0f);
+                    mView.setY(mView.getY() + strengthY /10.0f);
                 }
             }
         });
@@ -92,15 +92,15 @@ public class MainActivity extends AppCompatActivity {
         joystickViewLeft = (JoystickView) findViewById(R.id.joystickLeft);
         joystickViewLeft.setOnJoystickMoveListener(new JoystickView.OnJoystickMoveListener() {
             @Override
-            public void onJoystickMoveListener(final float powerX,final float powerY,final float power,final float angle, final long pressedTime) {
+            public void onJoystickMoveListener(final float strengthX, final float strengthY, final float strength, final float angle, final long pressedTime) {
 //                Log.d(TAG, "onJoystickMoveListener() called with: powerX = [" + powerX + "], powerY = [" + powerY + "], power = [" + power + "], angle = [" + angle + "], pressedTime = [" + pressedTime + "]");
 //                Log.d(TAG, "------------------------------------");
 
                 if (mWidthLayout <= 0 || mHeightLayout <= 0) { return; }
                 textViewJoystickLeft.setText(
-                        "PowerX: " + String.format("%.00f",powerX) + "\n" +
-                                "PowerY: " + String.format("%.00f",powerY) + "\n" +
-                                "Power: " + String.format("%.00f",power) + "\n" +
+                        "PowerX: " + String.format("%.00f", strengthX) + "\n" +
+                                "PowerY: " + String.format("%.00f", strengthY) + "\n" +
+                                "Power: " + String.format("%.00f", strength) + "\n" +
                                 "Angle: " + String.format("%.00f",angle) + "\n" +
                                 "Time: " + pressedTime + "\n"
                 );

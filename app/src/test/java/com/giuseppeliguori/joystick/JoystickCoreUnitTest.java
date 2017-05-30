@@ -1,7 +1,5 @@
 package com.giuseppeliguori.joystick;
 
-import com.giuseppeliguori.joystick.Repeat.Repeat;
-
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -68,8 +66,7 @@ public class JoystickCoreUnitTest {
     }
 
     @Test
-    @Repeat(10)
-    public void strengtIs7071AndStrengthXIs50AndStrengthYIs50WhenDeltaXIsFiftyAndDeltaYIsFifty() {
+    public void strengthIs7071AndStrengthXIs50AndStrengthYIs50WhenDeltaXIsFiftyAndDeltaYIsFifty() {
         System.out.println("JoystickCoreUnitTest.strengthIsZeroWhenDeltaXIsZeroAndDeltaYIsZero");
         float strengths[] =  getStrengths(50, 50, 100);
         // math sqrt (50*50) + (50*50) = 70.71
@@ -77,6 +74,4 @@ public class JoystickCoreUnitTest {
         assertEquals(50, strengths[1] , 0);
         assertEquals(50, strengths[2] , 0);
     }
-
-
 }
