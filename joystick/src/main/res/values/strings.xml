@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Joystick</string>
+    <color name="joystick_color">#000000</color>
+</resources>

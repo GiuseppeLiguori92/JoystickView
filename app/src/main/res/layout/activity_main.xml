@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.giuseppeliguori.joystick.MainActivity">
+    tools:context="com.giuseppeliguori.MainActivity">
 
     <RelativeLayout
         android:id="@+id/layout"
@@ -62,6 +61,7 @@
             android:id="@+id/view"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:rotation="90"
             android:background="@color/colorPrimaryDark"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true">

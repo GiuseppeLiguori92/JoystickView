@@ -2,22 +2,27 @@ package com.giuseppeliguori.joystick;
 
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+
+import java.text.DecimalFormat;
 
 /**
  * Created by giuseppeliguori on 21/04/2017.
  */
 
-public class JoystickView extends View implements View.OnTouchListener{
+public class JoystickView extends View implements View.OnTouchListener, JoystickStatus{
 
     private static final String TAG = "JoystickView";
+
     public static int UPDATE_FREQUENCY = 10;
 
     // Width & Height definition
@@ -46,6 +51,8 @@ public class JoystickView extends View implements View.OnTouchListener{
     private float mStrengthY            = 0;
     private long mStartPressedTime      = 0;
     private long mPressedTime           = 0;
+    private int mColor                  = 0;
+    private int mAlphaColor             = 0;
 
     // Listener
     private OnJoystickMoveListener onJoystickMoveListener = null;
@@ -58,17 +65,18 @@ public class JoystickView extends View implements View.OnTouchListener{
 
     public JoystickView(Context context) {
         super(context);
+        setColor(mColor);
         init();
     }
 
     public JoystickView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        setColor(context.getResources().getColor(R.color.joystick_color));
         init();
     }
 
     private void init() {
         setOnTouchListener(this);
-        mHandler.post(mUiUpdater);
     }
 
     private Runnable mUiUpdater = new Runnable() {
@@ -90,7 +98,7 @@ public class JoystickView extends View implements View.OnTouchListener{
 
         drawInternalCircle(canvas);
 
-        //drawLine(canvas);
+        drawLine(canvas);
     }
 
     private void drawLine(Canvas canvas) {
@@ -98,25 +106,30 @@ public class JoystickView extends View implements View.OnTouchListener{
     }
 
     private void drawInternalCircle(Canvas canvas) {
-        mPaint.setColor(Color.parseColor("#77000000"));
+        mPaint.setColor(mAlphaColor);
         mPaint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(mWidth/2.0f, mHeight/2.0f, mExternalRadius, mPaint);
 
-        mPaint.setColor(Color.parseColor("#000000"));
+        mPaint.setColor(mColor);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(STROKE_WIDTH);
         canvas.drawCircle(mWidth/2.0f, mHeight/2.0f, mExternalRadius - STROKE_WIDTH/2.0f, mPaint);
     }
 
     private void drawExternalCircle(Canvas canvas) {
-        mPaint.setColor(Color.parseColor("#77000000"));
+        mPaint.setColor(mAlphaColor);
         mPaint.setStyle(Paint.Style.FILL);
         canvas.drawCircle(mPositionInternalCircle[0], mPositionInternalCircle[1], mInternalRadius, mPaint);
 
-        mPaint.setColor(Color.parseColor("#000000"));
+        mPaint.setColor(mColor);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeWidth(STROKE_WIDTH);
         canvas.drawCircle(mPositionInternalCircle[0], mPositionInternalCircle[1], mInternalRadius - STROKE_WIDTH/2.0f, mPaint);
+    }
+
+    private void setColor(int color) {
+        mColor = color;
+        mAlphaColor = Color.argb(0x77, Color.red(mColor), Color.green(mColor), Color.blue(mColor));
     }
 
     @Override
@@ -253,6 +266,18 @@ public class JoystickView extends View implements View.OnTouchListener{
     }
 
     public long getPressedTime() { return mPressedTime; }
+
+    @Override
+    public void onPause() {
+        Log.d(TAG, "onPause() called");
+        mHandler.removeCallbacks(mUiUpdater);
+    }
+
+    @Override
+    public void onResume() {
+        Log.d(TAG, "onResume() called");
+        mHandler.post(mUiUpdater);
+    }
 
     public interface OnJoystickMoveListener {
         void onJoystickMoveListener(float strengthX, float strengthY, float strength, float angle, long pressedTime);

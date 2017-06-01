@@ -1,14 +1,17 @@
-package com.giuseppeliguori.joystick;
+package com.giuseppeliguori;
 
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.test.espresso.UiController;
 import android.support.test.espresso.ViewAction;
 import android.support.test.espresso.action.MotionEvents;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.view.MotionEvent;
 import android.view.View;
+
+import com.giuseppeliguori.joystick.JoystickView;
 
 import org.hamcrest.Matcher;
 import org.junit.Before;

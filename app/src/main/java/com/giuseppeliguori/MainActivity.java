@@ -1,4 +1,4 @@
-package com.giuseppeliguori.joystick;
+package com.giuseppeliguori;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,11 +7,11 @@ import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.giuseppeliguori.joystick.JoystickView;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-
-    private static final float K = 3.0f;
 
     // Layout params
     private RelativeLayout mLayout;
@@ -108,4 +108,33 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (joystickViewRight != null) {
+            joystickViewRight.onResume();
+        }
+
+        if (joystickViewLeft != null) {
+            joystickViewLeft.onResume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (joystickViewRight != null) {
+            joystickViewRight.onPause();
+        }
+
+        if (joystickViewLeft != null) {
+            joystickViewLeft.onPause();
+        }
+    }
 }
+
+
+
+
